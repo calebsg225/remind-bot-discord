@@ -1,0 +1,32 @@
+{
+  "name": "remind-master-69",
+  "version": "1.0.0",
+  "description": "make remind bot commands available to non patreons",
+  "main": "index.ts",
+  "scripts": {
+    "devStart": "npx tsx watch src/index.ts",
+    "start": "npx tsx src/index.ts",
+    "dev": "npx tsx src/deploy/devDeploy.ts",
+    "global": "npx tsx src/deploy/globalDeploy.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebsg225/remind-bot-discord.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calebsg225/remind-bot-discord/issues"
+  },
+  "homepage": "https://github.com/calebsg225/remind-bot-discord#readme",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "discord.js": "^14.14.1",
+    "node": "^21.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
+  }
+}
