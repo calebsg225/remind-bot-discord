@@ -17,7 +17,7 @@ export default (global: boolean) => {
   
   devCommands.forEach((v, k) => {
     console.log(chalk.cyan(`Loading the \`${k}\` dev command...`))
-    globalCommandsData.push(v.data.toJSON());  
+    devCommandsData.push(v.data.toJSON());  
   });
 
   const rest = new REST().setToken(BotToken);
