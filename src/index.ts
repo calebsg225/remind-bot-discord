@@ -6,6 +6,7 @@ import listeners from "./listeners/listeners";
 
 import mongoose from "mongoose";
 import { globalCommands, devCommands } from "./commands/commands";
+import ReminderHandler from "./model/ReminderHandler";
 const { connect, connection } = mongoose;
 
 console.log(chalk.yellow(`Bot is starting...`));
@@ -21,6 +22,9 @@ client.commands = globalCommands.concat(devCommands);
 
 // command cooldowns
 client.cooldowns = new Collection;
+
+// create reminder handler on client
+client.reminderHandler = new ReminderHandler();
 
 // activate event listeners
 listeners(client, connection);
