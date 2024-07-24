@@ -29,10 +29,13 @@ export const remind: SlashCommand = {
     execute: async (interaction) => {
       const user = interaction.user;
       const options = interaction.options;
+      const remindHandler = interaction.client.reminderHandler;
 
       const time = options.getString('time', true);
       const content = options.getString('content', true);
       const interval = options.getString('interval');
       const expires = options.getString('expires');
+
+      remindHandler.createReminder(user.id, time, content, interval, expires);
     }
 }

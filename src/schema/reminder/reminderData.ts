@@ -23,7 +23,6 @@ const remindChannels = new Schema({
 
 const remindGuilds = new Schema({
   _id: mongoose.Types.ObjectId,
-  discordUserId: String,
   channels: { // key is channel id
     type: Map,
     of: remindChannels

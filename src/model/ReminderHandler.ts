@@ -7,7 +7,9 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = () => {}
+  createReminder = (userId: string, time: string, content: string, interval?: string, expires?: string) => {
+    
+  }
 
   // look at current reminders
   viewReminders = () => {}
