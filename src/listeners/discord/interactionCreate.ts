@@ -1,15 +1,19 @@
 // handle user bot interactions
 
-import { ChatInputCommandInteraction, Events, Interaction, Collection } from "discord.js";
+import { ChatInputCommandInteraction, Events, Interaction, AutocompleteInteraction } from "discord.js";
 import chalk from "chalk";
 import { Listener } from "../_interface/Listener";
 import handleCooldowns from "../helpers/handleCooldowns";
+import SlashCommand from "../../commands/_interface/SlashCommand";
 
 export const interactionCreate: Listener = {
   name: Events.InteractionCreate,
   execute: async (interaction: Interaction) => {
     if (interaction.isChatInputCommand()) {
       await handleSlashCommands(interaction);
+    }
+    else if (interaction.isAutocomplete()) {
+      await handleAutocompleteInteractions(interaction);
     }
   }
 }
@@ -26,6 +30,7 @@ const handleSlashCommands = async (interaction: ChatInputCommandInteraction) => 
     });
   }
 
+  // handle cooldown functionality
   const cooldownResult = handleCooldowns.createCooldown(interaction);
   if (cooldownResult) return cooldownResult;
 
@@ -42,5 +47,20 @@ const handleSlashCommands = async (interaction: ChatInputCommandInteraction) => 
     } else {
       interaction.reply(reply);
     }
+  }
+}
+
+const handleAutocompleteInteractions = async (interaction: AutocompleteInteraction) => {
+  const command = interaction.client.commands.get(interaction.commandName);
+
+  if (!command) {
+    const message = `The command \`${interaction.commandName}\` does not exist.`;
+    console.log(chalk.blueBright(message));
+  }
+
+  try {
+    command.autocomplete(interaction);
+  } catch(error) {
+    console.log(chalk.blackBright(error))
   }
 }

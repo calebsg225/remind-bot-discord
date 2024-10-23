@@ -11,6 +11,7 @@ export const remind: SlashCommand = {
       option.setName('time')
         .setDescription('The time (and optionally date) to set the reminder for')
         .setRequired(true)
+        .setAutocomplete(true)
     )
     .addStringOption(option => 
       option.setName('content')
@@ -37,5 +38,18 @@ export const remind: SlashCommand = {
       const expires = options.getString('expires');
 
       remindHandler.createReminder(user.id, time, content, interval, expires);
+    }
+    ,
+    autocomplete: async (interaciton) => {
+      const focusedValue = interaciton.options.getFocused();
+      const remindHandler = interaciton.client.reminderHandler;
+
+      if (!focusedValue.length) {
+        interaciton.respond([{name: "Start typing a time...", value: "now"}]);
+        return;
+      }
+
+      const parsedReminder = remindHandler.parseReminder(focusedValue);
+
     }
 }
