@@ -7,6 +7,7 @@ const reminders = new Schema({
   repeatInterval: Number, // time to wait before repeating the  reminder
   repeatEndDate: Date, // for repeating reminders, the time at which the reminder will stop repeating
   setBy: String, // user who created reminder
+  channel: String, // channel to send message to
   content: String, // message to send at remind date(s)
 }, {
   _id: false

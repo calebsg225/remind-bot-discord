@@ -52,7 +52,14 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = (userId: string, time: string, content: string, interval?: string, expires?: string) => {
+  createReminder = (
+    userId: string, 
+    channelId: string, 
+    time: string, 
+    content: string, 
+    interval?: string, 
+    expires?: string
+  ) => {
     
   }
 
@@ -61,6 +68,8 @@ class ReminderHandler {
 
   // delete reminders
   deleteReminder = () => {}
+
+  buildReminders = () => {}
 }
 
 export default ReminderHandler;

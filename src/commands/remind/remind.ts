@@ -36,8 +36,14 @@ export const remind: SlashCommand = {
       const content = options.getString('content', true);
       const interval = options.getString('interval');
       const expires = options.getString('expires');
-
-      remindHandler.createReminder(user.id, time, content, interval, expires);
+      if (!remindHandler.parseTime(time)) {
+        return interaction.reply({
+          ephemeral: true,
+          content: "Time could not be processed."
+        });
+      }
+      remindHandler.createReminder(user.id, interaction.channelId, time, content, interval, expires);
+      
     }
     ,
     autocomplete: async (interaciton) => {
@@ -52,10 +58,7 @@ export const remind: SlashCommand = {
       const parsedTime = remindHandler.parseTime(focusedValue);
 
       const response: {name: string, value: string} = {name: "", value: parsedTime + ''};
-      if (parsedTime < 0) {
-        response.name = "Time is in the past.";
-        response.value = "1 year ago";
-      } else if (parsedTime > 86400000) {
+      if (parsedTime > 86400000) {
         response.name = `In approximately ${Math.floor(parsedTime/86400000)} days, ${(parsedTime % 86400000) / 3600000} hours`;
       } else if (parsedTime > 3600000) {
         response.name = `In approximately ${Math.floor(parsedTime/3600000)} hours, ${(parsedTime % 3600000) / 60000} minutes`;

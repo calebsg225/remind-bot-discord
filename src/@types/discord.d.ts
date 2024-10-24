@@ -8,6 +8,7 @@ declare module "discord.js" {
   export interface Client {
     commands: Collection<string, SlashCommand>,
     cooldowns: Collection<string, Collection<string, number>>,
-    reminderHandler: ReminderHandler
+    reminderHandler: ReminderHandler,
+    reminders: Collection<string, any>
   }
 }
