@@ -49,7 +49,24 @@ export const remind: SlashCommand = {
         return;
       }
 
-      const parsedReminder = remindHandler.parseReminder(focusedValue);
+      const parsedTime = remindHandler.parseTime(focusedValue);
+
+      const response: {name: string, value: string} = {name: "", value: parsedTime + ''};
+      if (parsedTime < 0) {
+        response.name = "Time is in the past.";
+        response.value = "1 year ago";
+      } else if (parsedTime > 86400000) {
+        response.name = `In approximately ${Math.floor(parsedTime/86400000)} days, ${(parsedTime % 86400000) / 3600000} hours`;
+      } else if (parsedTime > 3600000) {
+        response.name = `In approximately ${Math.floor(parsedTime/3600000)} hours, ${(parsedTime % 3600000) / 60000} minutes`;
+      } else if (parsedTime > 60000) {
+        response.name = `In approximately ${parsedTime/60000} minutes`;
+      } else {
+        response.name = "Time is not recognized.";
+        response.value = "now";
+      }
+
+      interaciton.respond([response]);
 
     }
 }

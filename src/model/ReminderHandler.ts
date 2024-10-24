@@ -10,7 +10,7 @@ class ReminderHandler {
     let res = 0;
     switch(unit.charAt(0)) {
       case ('d'): // decades or days, priority goes to days
-        res = int * 8640000 * (unit.length > 1 && unit.charAt(1) === 'e' ? 365 : 1);
+        res = int * 86400000 * (unit.length > 1 && unit.charAt(1) === 'e' ? 365 : 1);
         break;
       case ('y'): // years
         res = int * 31536000000;
@@ -34,7 +34,7 @@ class ReminderHandler {
   }
 
   // parse inputed string into a single value
-  parseReminder = (input: string): number => {
+  parseTime = (input: string): number => {
     const splitInp = input.toLocaleLowerCase().replace(/\W/g, '').split(/([0-9]+)/);
     if (!splitInp[0].length) splitInp.shift();
     let res = 0;
@@ -46,6 +46,7 @@ class ReminderHandler {
         continue;
       }
       res += this.unitConvert(+splitInp[i], splitInp[i+1]);
+      i+=2;
     }
     return res;
   }
