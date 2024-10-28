@@ -52,15 +52,17 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = (
+  createReminder = async (
     userId: string, 
+    guildId: string,
     channelId: string, 
-    time: string, 
+    time: number, 
+    now: number,
     content: string, 
-    interval?: string, 
-    expires?: string
+    interval?: number, 
+    expires?: number
   ) => {
-    
+    await this.database.createReminder(userId, guildId, channelId, time, now, content, interval, expires);
   }
 
   // look at current reminders

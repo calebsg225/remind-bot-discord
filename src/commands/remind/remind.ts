@@ -32,6 +32,7 @@ export const remind: SlashCommand = {
       const options = interaction.options;
       const remindHandler = interaction.client.reminderHandler;
 
+      const now = Date.now();
       const time = options.getString('time', true);
       const content = options.getString('content', true);
       const interval = options.getString('interval');
@@ -42,8 +43,7 @@ export const remind: SlashCommand = {
           content: "Time could not be processed."
         });
       }
-      remindHandler.createReminder(user.id, interaction.channelId, time, content, interval, expires);
-      
+      await remindHandler.createReminder(user.id, interaction.guild.id, interaction.channel.id, +time, now, content, +interval, +expires);
     }
     ,
     autocomplete: async (interaciton) => {
