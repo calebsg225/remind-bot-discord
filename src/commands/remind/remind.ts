@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import SlashCommand from "../_interface/SlashCommand";
 
 export const remind: SlashCommand = {
@@ -29,6 +29,7 @@ export const remind: SlashCommand = {
     ,
     execute: async (interaction) => {
       const user = interaction.user;
+      const channelId = interaction.channel.id;
       const options = interaction.options;
       const remindHandler = interaction.client.reminderHandler;
 
@@ -38,17 +39,18 @@ export const remind: SlashCommand = {
       const interval = options.get('interval')?.value || '';
       const expires = options.get('expires')?.value || '';
       const time = !+timeValue ? remindHandler.parseTime((typeof timeValue === 'string') ? timeValue : '') : timeValue;
-      console.log(time, typeof time, +time, '\n', timeValue);
       if (!+time) {
-        return interaction.reply({
-          ephemeral: true,
-          content: "Time could not be processed."
-        });
+        return interaction.reply("Time could not be processed");
       }
-      await remindHandler.createReminder(user.id, interaction.guild.id, interaction.channel.id, +time, now, content, +interval, +expires);
-      return interaction.reply({
-        content: `Reminder set: ${time}`
-      });
+      await remindHandler.createReminder(user.id, interaction.guild.id, channelId, +time, now, content, +interval, +expires);
+      const embed = new EmbedBuilder()
+        .setTitle('Reminder Created')
+        .setDescription(`Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`)
+        .setColor('Yellow')
+      const reply = {
+        embeds: [embed]
+      }
+      return interaction.reply(reply);
     }
     ,
     autocomplete: async (interaciton) => {
@@ -74,6 +76,5 @@ export const remind: SlashCommand = {
         response.value = "now";
       }
       interaciton.respond([{ name: focusedValue, value: parsedTime + '' }, response ]);
-
     }
 }

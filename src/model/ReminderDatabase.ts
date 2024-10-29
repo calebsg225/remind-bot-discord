@@ -47,7 +47,7 @@ class ReminderDatabaseHandler {
       content: content
     });
 
-    guildData.reminders.set(`${now + time}-${userId}`, newReminder);
+    guildData.reminders.set(`${now}-${userId}`, newReminder);
     await guildData.save();
   }
 
