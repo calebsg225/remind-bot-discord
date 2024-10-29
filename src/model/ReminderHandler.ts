@@ -37,6 +37,7 @@ class ReminderHandler {
   parseTime = (input: string): number => {
     const splitInp = input.toLocaleLowerCase().replace(/\W/g, '').split(/([0-9]+)/);
     if (!splitInp[0].length) splitInp.shift();
+    if (!splitInp[splitInp.length - 1]) splitInp.pop();
     let res = 0;
     let i = 0;
     while (i+1 < splitInp.length) {
@@ -62,6 +63,7 @@ class ReminderHandler {
     interval?: number, 
     expires?: number
   ) => {
+    console.log(time);
     await this.database.createReminder(userId, guildId, channelId, time, now, content, interval, expires);
   }
 

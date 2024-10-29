@@ -33,17 +33,22 @@ export const remind: SlashCommand = {
       const remindHandler = interaction.client.reminderHandler;
 
       const now = Date.now();
-      const time = options.getString('time', true);
+      const timeValue = options.get('time', true).value;
       const content = options.getString('content', true);
-      const interval = options.getString('interval');
-      const expires = options.getString('expires');
-      if (!remindHandler.parseTime(time)) {
+      const interval = options.get('interval')?.value || '';
+      const expires = options.get('expires')?.value || '';
+      const time = !+timeValue ? remindHandler.parseTime((typeof timeValue === 'string') ? timeValue : '') : timeValue;
+      console.log(time, typeof time, +time, '\n', timeValue);
+      if (!+time) {
         return interaction.reply({
           ephemeral: true,
           content: "Time could not be processed."
         });
       }
       await remindHandler.createReminder(user.id, interaction.guild.id, interaction.channel.id, +time, now, content, +interval, +expires);
+      return interaction.reply({
+        content: `Reminder set: ${time}`
+      });
     }
     ,
     autocomplete: async (interaciton) => {
@@ -63,13 +68,12 @@ export const remind: SlashCommand = {
       } else if (parsedTime > 3600000) {
         response.name = `In approximately ${Math.floor(parsedTime/3600000)} hours, ${(parsedTime % 3600000) / 60000} minutes`;
       } else if (parsedTime > 60000) {
-        response.name = `In approximately ${parsedTime/60000} minutes`;
+        response.name = `In approximately ${Math.floor(parsedTime/60000)} minutes`;
       } else {
         response.name = "Time is not recognized.";
         response.value = "now";
       }
-
-      interaciton.respond([response]);
+      interaciton.respond([{ name: focusedValue, value: parsedTime + '' }, response ]);
 
     }
 }

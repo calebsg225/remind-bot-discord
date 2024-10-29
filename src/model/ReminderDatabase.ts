@@ -33,7 +33,8 @@ class ReminderDatabaseHandler {
     interval?: number, 
     expires?: number
   ) => {
-    if (!(await this.isNewGuild(guildId))) await this.createGuild(guildId);
+    // if guild data is not in database, add it
+    if (await this.isNewGuild(guildId)) await this.createGuild(guildId);
     const guildData = await this.fetchGuildData(guildId);
 
     const newReminder = new Reminders({
