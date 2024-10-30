@@ -1,5 +1,6 @@
 import { RemindGuilds, Reminders } from "../schema/reminder/reminderData";
 import mongoose from "mongoose";
+import { createReminderProps } from "./types/reminderTypes";
 
 class ReminderDatabaseHandler {
   constructor() {}
@@ -22,17 +23,13 @@ class ReminderDatabaseHandler {
     return await RemindGuilds.findOne({guildId: guildId});
   }
 
+  getAllGuildData = async () => {
+    return await RemindGuilds.find({});
+  }
+
   // create reminder
-  createReminder = async (
-    userId: string, 
-    guildId: string, 
-    channelId: string, 
-    time: number,
-    now: number,
-    content: string, 
-    interval?: number, 
-    expires?: number
-  ) => {
+  createReminder = async (reminderProps: createReminderProps) => {
+    const { userId, guildId, channelId, time, now, content, interval, expires } = reminderProps;
     // if guild data is not in database, add it
     if (await this.isNewGuild(guildId)) await this.createGuild(guildId);
     const guildData = await this.fetchGuildData(guildId);
@@ -55,7 +52,11 @@ class ReminderDatabaseHandler {
   viewReminders = () => {}
 
   // delete reminder
-  deleteReminder = () => {}
+  deleteReminder = async (guildId: string, reminderId: string) => {
+    const guildData = await this.fetchGuildData(guildId);
+    guildData.reminders.delete(reminderId);
+    await guildData.save();
+  }
 
   // change reminder
   updateReminder = () => {}

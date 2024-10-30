@@ -4,7 +4,6 @@ import { ChatInputCommandInteraction, Events, Interaction, AutocompleteInteracti
 import chalk from "chalk";
 import { Listener } from "../_interface/Listener";
 import handleCooldowns from "../helpers/handleCooldowns";
-import SlashCommand from "../../commands/_interface/SlashCommand";
 
 export const interactionCreate: Listener = {
   name: Events.InteractionCreate,

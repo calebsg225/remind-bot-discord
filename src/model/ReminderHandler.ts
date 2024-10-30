@@ -1,8 +1,12 @@
+import { Client, TextChannel } from "discord.js";
 import ReminderDatabaseHandler from "./ReminderDatabase";
+import { createReminderProps } from "./types/reminderTypes";
 
 class ReminderHandler {
   database: ReminderDatabaseHandler;
-  constructor() {
+  client: Client
+  constructor(client: Client) {
+    this.client = client;
     this.database = new ReminderDatabaseHandler();
   }
 
@@ -53,18 +57,32 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = async (
-    userId: string, 
-    guildId: string,
-    channelId: string, 
-    time: number, 
-    now: number,
-    content: string, 
-    interval?: number, 
-    expires?: number
-  ) => {
-    console.log(time);
-    await this.database.createReminder(userId, guildId, channelId, time, now, content, interval, expires);
+  createReminder = async (reminderProps: createReminderProps) => {
+    await this.database.createReminder(reminderProps);
+    this.addReminderTimeout(reminderProps);
+  }
+
+  private addReminderTimeout = (reminderProps: createReminderProps) => {
+    const { userId, guildId, channelId, now, time, content } = reminderProps;
+    const channel = this.client.channels.cache.get(channelId) as TextChannel;
+    const reminderId = `${now}-${userId}`;
+    const timeoutId = setTimeout(() => {
+      channel.send(content);
+      this.client.reminders.delete(reminderId);
+      this.database.deleteReminder(guildId, reminderId)
+    }, time)
+    this.client.reminders.set(reminderId, timeoutId + '');
+  }
+
+  /**
+   * Creates timeouts for all existing reminders in all guilds, discarding 
+   * reminders that are past due.
+   */
+  initiateReminderTimers = async () => {
+    for (const guild of await this.database.getAllGuildData()) {
+      for (const reminder of guild.reminders) {
+      }
+    }
   }
 
   // look at current reminders

@@ -23,8 +23,14 @@ client.commands = globalCommands.concat(devCommands);
 // command cooldowns
 client.cooldowns = new Collection;
 
+// reminder timers
+client.reminders = new Collection;
+
 // create reminder handler on client
-client.reminderHandler = new ReminderHandler();
+client.reminderHandler = new ReminderHandler(client);
+
+// create timeouts for existing reminders in database
+client.reminderHandler.initiateReminderTimers();
 
 // activate event listeners
 listeners(client, connection);

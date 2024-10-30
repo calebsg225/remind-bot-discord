@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import SlashCommand from "../_interface/SlashCommand";
+import { createReminderProps } from "../../model/types/reminderTypes";
 
 export const remind: SlashCommand = {
   path: `remind`,
@@ -31,18 +32,28 @@ export const remind: SlashCommand = {
       const user = interaction.user;
       const channelId = interaction.channel.id;
       const options = interaction.options;
-      const remindHandler = interaction.client.reminderHandler;
+      const reminderHandler = interaction.client.reminderHandler;
 
       const now = Date.now();
       const timeValue = options.get('time', true).value;
       const content = options.getString('content', true);
       const interval = options.get('interval')?.value || '';
       const expires = options.get('expires')?.value || '';
-      const time = !+timeValue ? remindHandler.parseTime((typeof timeValue === 'string') ? timeValue : '') : timeValue;
+      const time = !+timeValue ? reminderHandler.parseTime((typeof timeValue === 'string') ? timeValue : '') : timeValue;
       if (!+time) {
         return interaction.reply("Time could not be processed");
       }
-      await remindHandler.createReminder(user.id, interaction.guild.id, channelId, +time, now, content, +interval, +expires);
+      const reminderProps: createReminderProps = {
+        userId: user.id,
+        guildId: interaction.guild.id,
+        channelId: channelId,
+        time: +time,
+        now: now,
+        content: content,
+        interval: +interval,
+        expires: +expires
+      }
+      await reminderHandler.createReminder(reminderProps);
       const embed = new EmbedBuilder()
         .setTitle('Reminder Created')
         .setDescription(`Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`)
@@ -55,14 +66,14 @@ export const remind: SlashCommand = {
     ,
     autocomplete: async (interaciton) => {
       const focusedValue = interaciton.options.getFocused();
-      const remindHandler = interaciton.client.reminderHandler;
+      const reminderHandler = interaciton.client.reminderHandler;
 
       if (!focusedValue.length) {
         interaciton.respond([{name: "Start typing a time...", value: "now"}]);
         return;
       }
 
-      const parsedTime = remindHandler.parseTime(focusedValue);
+      const parsedTime = reminderHandler.parseTime(focusedValue);
 
       const response: {name: string, value: string} = {name: "", value: parsedTime + ''};
       if (parsedTime > 86400000) {

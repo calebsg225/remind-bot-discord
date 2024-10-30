@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, Collection } from "discord.js";
-import SlashCommand from "../../commands/_interface/SlashCommand";
 
 class HandleCooldowns {
   private defaultCooldownSeconds: number;
