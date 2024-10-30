@@ -59,18 +59,25 @@ class ReminderHandler {
   // create new reminder
   createReminder = async (reminderProps: createReminderProps) => {
     await this.database.createReminder(reminderProps);
-    this.addReminderTimeout(reminderProps);
+    const { userId, guildId, channelId, now, time, content } = reminderProps;
+    this.addReminderTimeout(userId, guildId, channelId, now, time, content);
   }
 
-  private addReminderTimeout = (reminderProps: createReminderProps) => {
-    const { userId, guildId, channelId, now, time, content } = reminderProps;
+  private addReminderTimeout = (
+    userId: string, 
+    guildId: string, 
+    channelId: string, 
+    timeSet: number, 
+    timeToNext: number,
+    content: string
+  ) => {
     const channel = this.client.channels.cache.get(channelId) as TextChannel;
-    const reminderId = `${now}-${userId}`;
-    const timeoutId = setTimeout(() => {
+    const reminderId = `${timeSet}-${userId}`;
+    const timeoutId = setTimeout(async () => {
       channel.send(content);
       this.client.reminders.delete(reminderId);
-      this.database.deleteReminder(guildId, reminderId)
-    }, time)
+      await this.database.deleteReminder(guildId, reminderId)
+    }, timeToNext)
     this.client.reminders.set(reminderId, timeoutId + '');
   }
 
@@ -81,6 +88,8 @@ class ReminderHandler {
   initiateReminderTimers = async () => {
     for (const guild of await this.database.getAllGuildData()) {
       for (const reminder of guild.reminders) {
+        const { userId, channelId, dateSet, dateEnd, content } = reminder[1];
+        this.addReminderTimeout(userId, guild.guildId, channelId, dateSet, dateEnd - dateSet, content);
       }
     }
   }

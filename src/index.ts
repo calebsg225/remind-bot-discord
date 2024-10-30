@@ -29,8 +29,6 @@ client.reminders = new Collection;
 // create reminder handler on client
 client.reminderHandler = new ReminderHandler(client);
 
-// create timeouts for existing reminders in database
-client.reminderHandler.initiateReminderTimers();
 
 // activate event listeners
 listeners(client, connection);
@@ -41,4 +39,7 @@ listeners(client, connection);
 })();
 
 // start bot
-client.login(BotToken);
+client.login(BotToken).then(() => {
+  // create timeouts for existing reminders in database
+  client.reminderHandler.initiateReminderTimers();
+});
