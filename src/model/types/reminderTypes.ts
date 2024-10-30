@@ -1,4 +1,4 @@
-type createReminderProps = {
+type CreateReminderProps = {
   userId: string,
   guildId: string,
   channelId: string,
@@ -9,4 +9,14 @@ type createReminderProps = {
   expires: number
 }
 
-export { createReminderProps }
+type DatabaseReminder = {
+  dateSet?: number,
+  dateEnd?: number,
+  repeatInterval?: number,
+  repeatEndDate?: number,
+  userId?: string,
+  channelId?: string,
+  content?: string
+}
+
+export { CreateReminderProps, DatabaseReminder }

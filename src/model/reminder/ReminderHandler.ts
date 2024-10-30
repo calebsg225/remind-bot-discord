@@ -1,16 +1,19 @@
-import { Client, EmbedData, TextChannel } from "discord.js";
+import { Client, EmbedData, InteractionReplyOptions, ReplyOptions, TextChannel } from "discord.js";
 import ReminderDatabaseHandler from "./ReminderDatabase";
-import { createReminderProps } from "../types/reminderTypes";
+import { CreateReminderProps, DatabaseReminder } from "../types/reminderTypes";
 import DJSHelpers from "../helpers/DJSHelpers";
 
 class ReminderHandler {
   database: ReminderDatabaseHandler;
   djsHelpers: DJSHelpers;
   client: Client
+
+  remindersPerPage: number;
   constructor(client: Client) {
     this.client = client;
     this.database = new ReminderDatabaseHandler();
     this.djsHelpers = new DJSHelpers();
+    this.remindersPerPage = 10;
   }
 
   private unitConvert = (int: number, unit: string): number => {
@@ -60,11 +63,11 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = async (reminderProps: createReminderProps, embedData: EmbedData) => {
+  createReminder = async (reminderProps: CreateReminderProps, embedData: EmbedData) => {
     await this.database.createReminder(reminderProps);
     const { userId, guildId, channelId, now, time, content } = reminderProps;
     this.addReminderTimeout(userId, guildId, channelId, now, time, content);
-    return this.djsHelpers.embedGenerator(embedData);
+    return this.djsHelpers.generateBaseEmbed(embedData);
   }
 
   private addReminderTimeout = (
@@ -98,8 +101,35 @@ class ReminderHandler {
     }
   }
 
-  // look at current reminders
-  viewReminders = () => {}
+  /**
+   * @param guildId id of guild to get reminders for
+   * @returns an array of all reminders in a specific channel in the guild
+   */
+  getChannelReminders = async (guildId: string, channelId: string): Promise<DatabaseReminder[]> => {
+    const reminders = await this.database.getGuildReminders(guildId);
+    const channelReminders: DatabaseReminder[] = [];
+    reminders.forEach((reminder, k) => {
+      if (reminder.channelId === channelId) {channelReminders.push(reminder)}
+    });
+    return channelReminders;
+  }
+
+  enterLookMode = async (guildId: string, channelId: string) => {
+    const channelReminders = await this.getChannelReminders(guildId, channelId);
+    const pageCount = Math.ceil(channelReminders.length/this.remindersPerPage);
+    const reply: InteractionReplyOptions = {}
+    if (!pageCount) return { pageCount, reply }
+
+    reply.embeds = [this.djsHelpers.generateLookEmbed(channelId, channelReminders, pageCount, 1, this.remindersPerPage)];
+    reply.components = [this.djsHelpers.generateLookButtonRow()];
+
+    return { pageCount, reply }
+  }
+
+  refreshLookMode = async (guildId: string, channelId: string) => {
+  }
+
+  changeLookPage = () => {}
 
   // delete reminders
   deleteReminder = () => {}

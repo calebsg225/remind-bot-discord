@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { SimpleIdentifyThrottler, SlashCommandBuilder } from "discord.js";
 import SlashCommand from "../_interface/SlashCommand";
 
 export const look: SlashCommand = {
@@ -14,7 +14,18 @@ export const look: SlashCommand = {
     )
   ,
   execute: async (interaction) => {
-    const user = interaction.user;
+    await interaction.deferReply();
+    
+    const reminderHandler = interaction.client.reminderHandler;
+    
+    const channel = interaction.options.getChannel('channel', true);
 
+    const { pageCount, reply } = await reminderHandler.enterLookMode(interaction.guild.id, channel.id);
+
+    if (!pageCount) {
+      return interaction.editReply(`There are no reminders on <#${channel.id}>.`);
+    }
+
+    await interaction.editReply(reply);
   }
 }

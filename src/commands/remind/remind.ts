@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 import SlashCommand from "../_interface/SlashCommand";
-import { createReminderProps } from "../../model/types/reminderTypes";
+import { CreateReminderProps } from "../../model/types/reminderTypes";
 
 export const remind: SlashCommand = {
   path: `remind`,
@@ -42,7 +42,7 @@ export const remind: SlashCommand = {
     if (!+time) {
       return interaction.reply("Time could not be processed");
     }
-    const reminderProps: createReminderProps = {
+    const reminderProps: CreateReminderProps = {
       userId: user.id,
       guildId: interaction.guild.id,
       channelId: channelId,
@@ -54,8 +54,7 @@ export const remind: SlashCommand = {
     }
     const embed = await reminderHandler.createReminder(reminderProps, {
       title: 'Reminder Created',
-      description: `Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`,
-      color: 0xFFE500
+      description: `Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`
     });
     const reply = {
       embeds: [embed]
