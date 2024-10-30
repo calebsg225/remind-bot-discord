@@ -1,13 +1,16 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, EmbedData, TextChannel } from "discord.js";
 import ReminderDatabaseHandler from "./ReminderDatabase";
-import { createReminderProps } from "./types/reminderTypes";
+import { createReminderProps } from "../types/reminderTypes";
+import DJSHelpers from "../helpers/DJSHelpers";
 
 class ReminderHandler {
   database: ReminderDatabaseHandler;
+  djsHelpers: DJSHelpers;
   client: Client
   constructor(client: Client) {
     this.client = client;
     this.database = new ReminderDatabaseHandler();
+    this.djsHelpers = new DJSHelpers();
   }
 
   private unitConvert = (int: number, unit: string): number => {
@@ -57,10 +60,11 @@ class ReminderHandler {
   }
 
   // create new reminder
-  createReminder = async (reminderProps: createReminderProps) => {
+  createReminder = async (reminderProps: createReminderProps, embedData: EmbedData) => {
     await this.database.createReminder(reminderProps);
     const { userId, guildId, channelId, now, time, content } = reminderProps;
     this.addReminderTimeout(userId, guildId, channelId, now, time, content);
+    return this.djsHelpers.embedGenerator(embedData);
   }
 
   private addReminderTimeout = (

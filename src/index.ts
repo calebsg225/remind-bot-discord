@@ -6,7 +6,7 @@ import listeners from "./listeners/listeners";
 
 import mongoose from "mongoose";
 import { globalCommands, devCommands } from "./commands/commands";
-import ReminderHandler from "./model/ReminderHandler";
+import ReminderHandler from "./model/reminder/ReminderHandler";
 const { connect, connection } = mongoose;
 
 console.log(chalk.yellow(`Bot is starting...`));

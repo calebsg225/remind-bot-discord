@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import SlashCommand from "../_interface/SlashCommand";
 import { createReminderProps } from "../../model/types/reminderTypes";
 
@@ -52,11 +52,11 @@ export const remind: SlashCommand = {
       interval: +interval,
       expires: +expires
     }
-    await reminderHandler.createReminder(reminderProps);
-    const embed = new EmbedBuilder()
-      .setTitle('Reminder Created')
-      .setDescription(`Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`)
-      .setColor('Yellow')
+    const embed = await reminderHandler.createReminder(reminderProps, {
+      title: 'Reminder Created',
+      description: `Reminder for <#${channelId}> set for <t:${Math.floor((+time+now)/1000)}:R>`,
+      color: 0xFFE500
+    });
     const reply = {
       embeds: [embed]
     }

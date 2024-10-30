@@ -1,6 +1,6 @@
-import { RemindGuilds, Reminders } from "../schema/reminder/reminderData";
+import { RemindGuilds, Reminders } from "../../schema/reminder/reminderData";
 import mongoose from "mongoose";
-import { createReminderProps } from "./types/reminderTypes";
+import { createReminderProps } from "../types/reminderTypes";
 
 class ReminderDatabaseHandler {
   constructor() {}
