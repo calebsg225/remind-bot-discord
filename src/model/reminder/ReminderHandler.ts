@@ -96,7 +96,7 @@ class ReminderHandler {
     for (const guild of await this.database.getAllGuildData()) {
       for (const reminder of guild.reminders) {
         const { userId, channelId, dateSet, dateEnd, content } = reminder[1];
-        this.addReminderTimeout(userId, guild.guildId, channelId, dateSet, dateEnd - dateSet, content);
+        this.addReminderTimeout(userId, guild.guildId, channelId, dateSet, dateEnd - Date.now(), content);
       }
     }
   }
