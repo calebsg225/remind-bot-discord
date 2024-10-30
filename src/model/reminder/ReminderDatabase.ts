@@ -49,6 +49,7 @@ class ReminderDatabaseHandler {
   }
 
   getGuildReminders = async (guildId: string) => {
+    if (await this.isNewGuild(guildId)) await this.createGuild(guildId);
     const guildData = await this.fetchGuildData(guildId);
     return guildData.reminders;
   }
